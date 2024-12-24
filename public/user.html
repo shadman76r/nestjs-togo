@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Authentication</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f7f8fc, #d6e4f0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .switch-section {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .switch-section a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .switch-section a:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <script>
+    async function signup(event) {
+      event.preventDefault();
+
+      const username = document.getElementById('signup-username').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/user/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, email, password }),
+        });
+
+        if (response.ok) {
+          alert('Signup successful! Please log in.');
+          toggleForm();
+        } else {
+          const error = await response.json();
+          alert(`Signup failed: ${error.message}`);
+        }
+      } catch (err) {
+        console.error('Error during signup:', err);
+        alert('An error occurred during signup.');
+      }
+    }
+
+    async function login(event) {
+      event.preventDefault();
+
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/user/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('token', data.token); // Store JWT token locally
+          alert('Login successful! Token has been stored.');
+        } else {
+          const error = await response.json();
+          alert(`Login failed: ${error.message}`);
+        }
+      } catch (err) {
+        console.error('Error during login:', err);
+        alert('An error occurred during login.');
+      }
+    }
+
+    function toggleForm() {
+      document.getElementById('signup-form').classList.toggle('hidden');
+      document.getElementById('login-form').classList.toggle('hidden');
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>User Authentication</h1>
+
+    <!-- Signup Form -->
+    <div id="signup-form">
+      <h2>Sign Up</h2>
+      <form onsubmit="signup(event)">
+        <label for="signup-username">Username:</label>
+        <input type="text" id="signup-username" required>
+
+        <label for="signup-email">Email:</label>
+        <input type="email" id="signup-email" required>
+
+        <label for="signup-password">Password:</label>
+        <input type="password" id="signup-password" required>
+
+        <button type="submit">Sign Up</button>
+      </form>
+      <div class="switch-section">
+        Already have an account? <a href="#" onclick="toggleForm()">Log In</a>
+      </div>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-form" class="hidden">
+      <h2>Log In</h2>
+      <form onsubmit="login(event)">
+        <label for="login-email">Email:</label>
+        <input type="email" id="login-email" required>
+
+        <label for="login-password">Password:</label>
+        <input type="password" id="login-password" required>
+
+        <button type="submit">Log In</button>
+      </form>
+      <div class="switch-section">
+        Don't have an account? <a href="#" onclick="toggleForm()">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
