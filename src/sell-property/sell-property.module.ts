@@ -8,7 +8,7 @@ import { AuthModule } from '../auth/auth.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([SellProperty]),
-    AuthModule,
+    AuthModule, // Import AuthModule for authentication
   ],
   controllers: [SellPropertyController],
   providers: [SellPropertyService],
