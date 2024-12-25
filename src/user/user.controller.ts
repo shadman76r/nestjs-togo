@@ -12,6 +12,11 @@ export class UserController {
 
   @Post('login')
   async login(@Body() body: { email: string; password: string }) {
-    return this.userService.login(body.email, body.password);
+    return this.userService.loginWithPassword(body.email, body.password);
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() body: { email: string; newPassword: string }) {
+    return this.userService.resetPassword(body.email, body.newPassword);
   }
 }
