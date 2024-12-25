@@ -3,87 +3,213 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Available Properties for Sale</title>
+  <title>User Authentication</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
-      padding: 0;
-      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
     }
     .container {
-      max-width: 800px;
+      max-width: 400px;
       margin: 0 auto;
-    }
-    .property-card {
-      border: 1px solid #ccc;
+      background: #fff;
+      padding: 20px;
       border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 20px;
-      background-color: #fff;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-    .property-card img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
+    h2 {
+      text-align: center;
+      color: #333;
     }
-    .property-card h3 {
-      margin: 10px 0;
-      font-size: 20px;
+    .form-group {
+      margin-bottom: 15px;
     }
-    .property-card p {
-      margin: 5px 0;
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .form-group button {
+      width: 100%;
+      padding: 10px;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-group button:hover {
+      background: #0056b3;
+    }
+    .message {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f8d7da;
+      color: #721c24;
+      border-radius: 5px;
+      display: none;
+    }
+    .success {
+      background: #d4edda;
+      color: #155724;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Available Properties for Sale</h1>
-    <div id="properties-container"></div>
+    <h2>User Authentication</h2>
+
+    <!-- Signup Form -->
+    <div id="signup-form">
+      <h3>Sign Up</h3>
+      <div class="form-group">
+        <label for="signup-username">Username</label>
+        <input type="text" id="signup-username" placeholder="Enter your username">
+      </div>
+      <div class="form-group">
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" placeholder="Enter your email">
+      </div>
+      <div class="form-group">
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" placeholder="Enter your password">
+      </div>
+      <div class="form-group">
+        <button onclick="signup()">Sign Up</button>
+      </div>
+      <div id="signup-message" class="message"></div>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-form">
+      <h3>Login</h3>
+      <div class="form-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" placeholder="Enter your email">
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Enter your password">
+      </div>
+      <div class="form-group">
+        <button onclick="login()">Login</button>
+      </div>
+      <div id="login-message" class="message"></div>
+    </div>
+
+    <!-- Reset Password Form -->
+    <div id="reset-password-form">
+      <h3>Reset Password</h3>
+      <div class="form-group">
+        <label for="reset-email">Email</label>
+        <input type="email" id="reset-email" placeholder="Enter your email">
+      </div>
+      <div class="form-group">
+        <label for="reset-new-password">New Password</label>
+        <input type="password" id="reset-new-password" placeholder="Enter your new password">
+      </div>
+      <div class="form-group">
+        <button onclick="resetPassword()">Reset Password</button>
+      </div>
+      <div id="reset-message" class="message"></div>
+    </div>
   </div>
 
   <script>
-    // Fetch and display approved properties
-    async function fetchProperties() {
+    const apiUrl = 'http://localhost:3000/user';
+
+    // Signup Function
+    async function signup() {
+      const username = document.getElementById('signup-username').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+
       try {
-        const response = await fetch('http://localhost:3000/sell-property/approved'); // Updated endpoint for approved properties
-        if (!response.ok) throw new Error('Failed to fetch properties');
-        const properties = await response.json();
-
-        console.log('Fetched properties:', properties); // Debugging log
-
-        const container = document.getElementById('properties-container');
-        container.innerHTML = ''; // Clear previous content
-
-        // Display properties
-        properties.forEach((property) => {
-          const card = document.createElement('div');
-          card.className = 'property-card';
-
-          const image = property.filePath
-            ? `<img src="http://localhost:3000/${property.filePath}" alt="${property.title}">`
-            : '<p><em>No image available</em></p>';
-
-          card.innerHTML = `
-            ${image}
-            <h3>${property.title}</h3>
-            <p><strong>Description:</strong> ${property.description}</p>
-            <p><strong>Price:</strong> $${property.price}</p>
-            <p><strong>Location:</strong> ${property.location}</p>
-            <p><strong>Contact:</strong> ${property.contact}</p>
-          `;
-
-          container.appendChild(card);
+        const response = await fetch(`${apiUrl}/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password })
         });
+
+        const result = await response.json();
+        const messageDiv = document.getElementById('signup-message');
+        if (response.ok) {
+          messageDiv.textContent = 'Signup successful!';
+          messageDiv.className = 'message success';
+        } else {
+          messageDiv.textContent = result.message;
+          messageDiv.className = 'message';
+        }
+        messageDiv.style.display = 'block';
       } catch (error) {
-        console.error('Error fetching properties:', error);
-        alert('Failed to load properties. Please try again.');
+        console.error(error);
       }
     }
 
-    // Fetch properties on page load
-    fetchProperties();
+    // Login Function
+    async function login() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const response = await fetch(`${apiUrl}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json();
+        const messageDiv = document.getElementById('login-message');
+        if (response.ok) {
+          messageDiv.textContent = `Login successful! Token: ${result.token}`;
+          messageDiv.className = 'message success';
+        } else if (result.resetLink) {
+          messageDiv.textContent = `${result.message} Click here: ${result.resetLink}`;
+          messageDiv.className = 'message';
+        } else {
+          messageDiv.textContent = result.message;
+          messageDiv.className = 'message';
+        }
+        messageDiv.style.display = 'block';
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    // Reset Password Function
+    async function resetPassword() {
+      const email = document.getElementById('reset-email').value;
+      const newPassword = document.getElementById('reset-new-password').value;
+
+      try {
+        const response = await fetch(`${apiUrl}/reset-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, newPassword })
+        });
+
+        const result = await response.json();
+        const messageDiv = document.getElementById('reset-message');
+        if (response.ok) {
+          messageDiv.textContent = result.message;
+          messageDiv.className = 'message success';
+        } else {
+          messageDiv.textContent = result.message;
+          messageDiv.className = 'message';
+        }
+        messageDiv.style.display = 'block';
+      } catch (error) {
+        console.error(error);
+      }
+    }
   </script>
 </body>
 </html>
