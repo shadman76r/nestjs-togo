@@ -21,15 +21,6 @@ export class SellPropertyService {
     return await this.sellPropertyRepository.save(property);
   }
 
-  async buyProperty(id: number): Promise<SellProperty> {
-    const property = await this.sellPropertyRepository.findOne({ where: { id } });
-    if (!property || property.isSold) {
-      throw new NotFoundException('Property not found or already sold.');
-    }
-    property.isSold = true;
-    return await this.sellPropertyRepository.save(property);
-  }
-
   async updateProperty(id: number, updateData: Partial<SellProperty>): Promise<SellProperty> {
     const property = await this.sellPropertyRepository.findOne({ where: { id } });
     if (!property) {
@@ -41,6 +32,6 @@ export class SellPropertyService {
 
   async deleteProperty(id: number): Promise<boolean> {
     const result = await this.sellPropertyRepository.delete(id);
-    return result.affected > 0; // Returns true if rows were deleted
+    return result.affected > 0;
   }
 }

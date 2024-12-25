@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SellPropertyModule } from './sell-property/sell-property.module';
-import { BuyPropertyModule } from './buy-property/buy-property.module';
+//import { BuyPropertyModule } from './buy-property/buy-property.module';
 import { AdminModule } from './admin/admin.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,9 +21,10 @@ import { UserModule } from './user/user.module';
       synchronize: true,
     }),
     SellPropertyModule,
-    BuyPropertyModule,
+   // BuyPropertyModule,
     AdminModule,
-    UserModule
+    UserModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
