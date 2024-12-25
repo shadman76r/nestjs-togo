@@ -17,9 +17,6 @@ export class SellProperty {
   @Column({ nullable: true })
   location: string;
 
-  @Column({ nullable: true })
-  filePath: string;
-
   @Column({ default: false })
   isSold: boolean;
 
@@ -27,5 +24,5 @@ export class SellProperty {
   isApproved: boolean;
 
   @Column({ nullable: true })
-  contact: string; // Add this field to store contact information
+  contact: string;
 }

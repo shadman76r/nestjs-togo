@@ -2,11 +2,11 @@ import {
   Controller,
   Post,
   Get,
-  Body,
-  UseGuards,
-  Param,
   Patch,
   Delete,
+  Param,
+  Body,
+  UseGuards,
   BadRequestException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -18,6 +18,7 @@ export class SellPropertyController {
   constructor(private readonly sellPropertyService: SellPropertyService) {}
 
   @Get('public')
+  @UseGuards(JwtAuthGuard)
   async getPublicProperties() {
     return this.sellPropertyService.getApprovedProperties();
   }

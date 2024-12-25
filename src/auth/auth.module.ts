@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
     JwtModule.register({
-      secret: 'your_secret_key', // Ensure this matches everywhere
+      secret: 'your_secret_key',
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  providers: [JwtStrategy, JwtAuthGuard],
-  exports: [JwtModule, JwtAuthGuard], // Export JwtModule and JwtAuthGuard
+  providers: [JwtAuthGuard, JwtStrategy],
+  exports: [JwtModule, JwtAuthGuard],
 })
 export class AuthModule {}

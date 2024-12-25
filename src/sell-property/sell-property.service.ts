@@ -31,6 +31,10 @@ export class SellPropertyService {
   }
 
   async deleteProperty(id: number): Promise<boolean> {
+    const property = await this.sellPropertyRepository.findOne({ where: { id } });
+    if (!property) {
+      throw new NotFoundException('Property not found.');
+    }
     const result = await this.sellPropertyRepository.delete(id);
     return result.affected > 0;
   }
