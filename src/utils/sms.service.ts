@@ -1,4 +1,4 @@
-/*import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as twilio from 'twilio';
 
 @Injectable()
@@ -15,8 +15,8 @@ export class SmsService {
   async sendVerificationCode(phoneNumber: string, code: string): Promise<void> {
     await this.client.messages.create({
       body: 'Your verification code is: ${code}',
-      from: '+880 1816 604938', // Replace with your Twilio phone number
+      from: 'phonenumber', // Replace with your Twilio phone number
       to: phoneNumber,
     });
   }
-}*/
+}
