@@ -42,7 +42,7 @@ export class AdminService {
     const token = this.jwtService.sign(payload);
 
     // Send verification email
-    const verificationLink = `http://localhost:3001/admin/verify`;
+    const verificationLink = 'http://localhost:3001/admin/verify';
     const message = `Hello Admin,\n\nPlease verify your account by clicking the link below:\n\n${verificationLink}\n\nThank you!`;
 
     await this.emailService.sendEmail(admin.email, 'Admin Verification', message);
