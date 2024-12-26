@@ -1,30 +1,31 @@
-import { Controller, Post, Body, Get, Patch, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Query } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { IsEmail, IsNotEmpty } from 'class-validator';
+
+class SignUpDto {
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  password: string;
+}
 
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Post('signup')
-  async createAdmin(@Body() credentials: { username: string; password: string }) {
-    return this.adminService.createAdmin(credentials.username, credentials.password);
+  async signUp(@Body() body: SignUpDto) {
+    return this.adminService.signUp(body.email, body.password);
   }
 
   @Post('login')
-  async login(@Body() credentials: { username: string; password: string }) {
-    return this.adminService.validateAdmin(credentials.username, credentials.password);
+  async login(@Body() body: { email: string; password: string }) {
+    return this.adminService.login(body.email, body.password);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('pending-properties')
-  async getPendingProperties() {
-    return this.adminService.getPendingProperties();
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Patch('approve/:id')
-  async approveProperty(@Param('id') id: number) {
-    return this.adminService.approveProperty(id);
+  @Post('verify')
+  async verifyAdmin(@Query('email') email: string) {
+    return this.adminService.verifyAdmin(email);
   }
 }

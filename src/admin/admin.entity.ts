@@ -6,8 +6,11 @@ export class Admin {
   id: number;
 
   @Column({ unique: true })
-  username: string;
+  email: string; // Admin's unique email address (NOT NULL)
 
   @Column()
-  password: string;
+  password: string; // Admin's password (NOT NULL)
+
+  @Column({ default: false })
+  isVerified: boolean; // Tracks whether the admin is verified
 }
