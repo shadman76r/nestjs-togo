@@ -7,8 +7,8 @@ export class SmsService {
 
   constructor() {
     this.client = twilio(
-      'AC695312d1fef7b00cd2655af0b1057f0c', // Replace with your Twilio Account SID
-      '0865971d1e03fc1fb1322e1dd7437bdb',  // Replace with your Twilio Auth Token
+      'sid', // Replace with your Twilio Account SID
+      'token',  // Replace with your Twilio Auth Token
     );
   }
 
