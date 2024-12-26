@@ -7,25 +7,25 @@ export class EmailService {
   private mailgun;
 
   constructor() {
-    const mg = new Mailgun(formData); // Use the correct FormData implementation
+    const mg = new Mailgun(formData); // using the formdata packeg
     this.mailgun = mg.client({
       username: 'api',
-      key: '2e68d0fb-fd93acad	', // Replace with your actual Mailgun API key
+      key: '2e68d0fb-fd93acad', //melgan API key
     });
   }
 
   async sendEmail(to: string, subject: string, text: string): Promise<void> {
-    const domain = 'mg.mydamain.com'; // Replace with your Mailgun domain (e.g., sandboxXXX.mailgun.org)
+    const domain = 'sandbox26d1705dec354500b1d4d86f98451dce.mailgun.org'; // meligan domain
     try {
       await this.mailgun.messages.create(domain, {
-        from: 'mg.mydamain.com', // Replace with your verified Mailgun sender email
+        from: 'shadmansakibalam@gmail.com', // valid maligan email id
         to,
         subject,
         text,
       });
     } catch (error) {
       console.error('Error sending email:', error);
-      throw error; // Re-throw the error to handle it in the calling method
+      throw error; // thorow the error hendel to the calling mathord
     }
   }
 }
