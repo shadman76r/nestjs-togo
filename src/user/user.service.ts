@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  ConflictException,
-  UnauthorizedException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException,  NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -18,9 +13,15 @@ export class UserService {
   ) {}
 
   // Signup method
-  async signup(username: string, email: string, password: string): Promise<{ token: string }> {
+  async signup(
+    username: string,
+    email: string,
+    password: string,
+  ): Promise<{ message: string; token: string }> {
     // Check for duplicate email or username
-    const existingUser = await this.userRepository.findOne({ where: [{ email }, { username }] });
+    const existingUser = await this.userRepository.findOne({
+      where: [{ email }, { username }],
+    });
     if (existingUser) {
       const conflictField = existingUser.email === email ? 'Email' : 'Username';
       throw new ConflictException(`${conflictField} already exists.`);
@@ -41,14 +42,17 @@ export class UserService {
     const payload = { username: user.username, sub: user.id };
     const token = this.jwtService.sign(payload);
 
-    user.token = token;
+    //user.token = token;
     await this.userRepository.save(user);
 
-    return { token };
+    return { message: 'Signup successful!', token};
   }
 
   // Login with password
-  async loginWithPassword(email: string, password: string): Promise<{ token: string } | { message: string; resetLink: string }> {
+  async loginWithPassword(
+    email: string,
+    password: string,
+  ): Promise<{ token: string } | { message: string; resetLink: string }> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new NotFoundException('User not found.');
@@ -57,7 +61,7 @@ export class UserService {
     if (user.password !== password) {
       return {
         message: 'Password is incorrect. Would you like to reset it?',
-        resetLink: `/user/reset-password`,
+        resetLink: '/user/reset-password',
       };
     }
 
@@ -71,7 +75,10 @@ export class UserService {
   }
 
   // Reset password
-  async resetPassword(email: string, newPassword: string): Promise<{ message: string }> {
+  async resetPassword(
+    email: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new NotFoundException('User not found.');
