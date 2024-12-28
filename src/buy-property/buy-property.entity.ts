@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+/*import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class BuyProperty {
@@ -22,4 +22,4 @@ export class BuyProperty {
 
   @Column({ nullable: true })
   buyer: string;
-}
+}*/

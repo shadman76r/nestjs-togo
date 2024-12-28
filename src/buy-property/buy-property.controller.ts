@@ -6,17 +6,17 @@ import { BuyPropertyService } from './buy-property.service';
 export class BuyPropertyController {
   constructor(private readonly buyPropertyService: BuyPropertyService) {}
 
-  // Public route to view all available properties
+  // Public route: View all unsold properties
   @Get('public')
   async getAllAvailableProperties() {
-    return this.buyPropertyService.getAllAvailableProperties();
+    return this.buyPropertyService.getAvailableProperties();
   }
 
-  // Secure route to buy a property
+  // Secure route: Purchase a property
   @Patch('purchase/:id')
   @UseGuards(JwtAuthGuard)
-  async buyProperty(@Param('id') id: number, @Request() req: any) {
-    const buyer = req.user.username;
-    return this.buyPropertyService.buyProperty(id, buyer);
+  async purchaseProperty(@Param('id') id: number, @Request() req: any) {
+    const buyer = req.user.username; // Get username from JWT token payload
+    return this.buyPropertyService.purchaseProperty(id, buyer);
   }
 }

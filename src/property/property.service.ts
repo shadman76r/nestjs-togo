@@ -18,7 +18,7 @@ export class PropertyService {
     const property = this.propertyRepository.create({
       ...propertyData,
       owner,
-      biddingEndsAt: new Date(Date.now() + 60 * 60 * 1000), // 1-hour bidding window
+      biddingEndsAt: new Date(Date.now() + 60 * 60 * 2000), // 2-hour bidding window
     });
     return this.propertyRepository.save(property);
   }
