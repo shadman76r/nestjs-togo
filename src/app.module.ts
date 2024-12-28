@@ -8,6 +8,7 @@ import { AdminModule } from './admin/admin.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { BuyPropertyModule } from './buy-property/buy-property.module';
+import { PropertyModule } from './property/property.module';
 
 @Module({
   imports: [
@@ -17,13 +18,14 @@ import { BuyPropertyModule } from './buy-property/buy-property.module';
       port: 5432,
       username: 'postgres',
       password: 'root',
-      database: 'finaltime',
+      database: 'buy',
       //entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
-      synchronize: false,
+      synchronize: true,
     }),
     SellPropertyModule,
     BuyPropertyModule,
+    PropertyModule,
     AdminModule,
     UserModule,
     AuthModule
