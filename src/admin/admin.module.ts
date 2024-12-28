@@ -3,15 +3,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Admin } from './admin.entity';
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
-import { EmailService } from '../utils/email.service';
-import { AuthModule } from '../auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Admin]),
-    AuthModule,
+    JwtModule.register({
+      secret: 'your_secret_key',
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
   controllers: [AdminController],
-  providers: [AdminService, EmailService],
+  providers: [AdminService],
 })
 export class AdminModule {}

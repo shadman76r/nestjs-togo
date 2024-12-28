@@ -1,9 +1,13 @@
-import { Injectable, ConflictException, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
+/*import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './admin.entity';
 import { JwtService } from '@nestjs/jwt';
-import { EmailService } from '../utils/email.service';
 
 @Injectable()
 export class AdminService {
@@ -11,55 +15,107 @@ export class AdminService {
     @InjectRepository(Admin)
     private readonly adminRepository: Repository<Admin>,
     private readonly jwtService: JwtService,
-    private readonly emailService: EmailService,
   ) {}
 
-  // Admin Sign-Up
-  async signUp(email: string, password: string): Promise<{ message: string }> {
+  // Admin Signup
+  async signUp(email: string, password: string): Promise<{ message: string; token: string }> {
     const existingAdmin = await this.adminRepository.findOne({ where: { email } });
     if (existingAdmin) {
-      throw new ConflictException('Admin with this email already exists');
+      throw new ConflictException('Admin with this email already exists.');
     }
 
-    const newAdmin = this.adminRepository.create({ email, password, isVerified: false });
-    try {
-      await this.adminRepository.save(newAdmin);
-      return { message: 'Admin successfully registered. Please log in to verify your account.' };
-    } catch (error) {
-      console.error('Error during sign-up:', error);
-      throw new InternalServerErrorException('An error occurred during admin registration');
-    }
+    const newAdmin = this.adminRepository.create({ email, password });
+    await this.adminRepository.save(newAdmin);
+
+    // Generate token
+    const token = this.jwtService.sign({ sub: newAdmin.id, email: newAdmin.email });
+    newAdmin.token = token;
+    await this.adminRepository.save(newAdmin);
+
+    return { message: 'Signup successful!', token };
   }
 
   // Admin Login
-  async login(email: string, password: string): Promise<{ token: string }> {
+  async login(email: string, password: string, token: string): Promise<{ message: string; token: string }> {
     const admin = await this.adminRepository.findOne({ where: { email } });
     if (!admin || admin.password !== password) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('Invalid email or password.');
     }
 
-    const payload = { email: admin.email, sub: admin.id };
-    const token = this.jwtService.sign(payload);
+    // Validate token
+    if (admin.token !== token) {
+      throw new ForbiddenException('Invalid token. Login not allowed.');
+    }
 
-    // Send verification email
-    const verificationLink = 'http://localhost:3001/admin/verify';
-    const message = `Hello Admin,\n\nPlease verify your account by clicking the link below:\n\n${verificationLink}\n\nThank you!`;
-
-    await this.emailService.sendEmail(admin.email, 'Admin Verification', message);
-
-    return { token };
+    return { message: 'Login successful!', token: admin.token };
   }
 
-  // Admin Verification
-  async verifyAdmin(email: string): Promise<{ message: string }> {
-    const admin = await this.adminRepository.findOne({ where: { email } });
-    if (!admin) {
-      throw new UnauthorizedException('Admin not found');
+  // Delete Admin (Restricted)
+  async deleteAdmin(adminId: number): Promise<void> {
+    throw new ForbiddenException('Admin deletion is not allowed.');
+  }
+}*/
+
+import { Injectable, ConflictException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Admin } from './admin.entity';
+import { JwtService } from '@nestjs/jwt';
+
+@Injectable()
+export class AdminService {
+  constructor(
+    @InjectRepository(Admin)
+    private readonly adminRepository: Repository<Admin>,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  // Admin Signup
+  async signUp(email: string, password: string): Promise<{ message: string; token: string }> {
+    const existingAdmin = await this.adminRepository.findOne({ where: { email } });
+    if (existingAdmin) {
+      throw new ConflictException('Admin with this email already exists.');
     }
 
-    admin.isVerified = true;
-    await this.adminRepository.save(admin);
+    const newAdmin = this.adminRepository.create({ email, password });
+    await this.adminRepository.save(newAdmin);
 
-    return { message: 'Admin successfully verified' };
+    // Generate token
+    const token = this.jwtService.sign({ sub: newAdmin.id, email: newAdmin.email });
+    newAdmin.token = token;
+    await this.adminRepository.save(newAdmin);
+
+    return { message: 'Signup successful!', token };
+  }
+
+  // Admin Login
+  async login(email: string, password: string): Promise<{ message: string; token: string }> {
+    const admin = await this.adminRepository.findOne({ where: { email } });
+    if (!admin || admin.password !== password) {
+      throw new UnauthorizedException('Invalid email or password.');
+    }
+
+    // Return token on successful login
+    return { message: 'Login successful!', token: admin.token };
+  }
+
+  // Validate Token from Authorization Header
+  async validateToken(authHeader: string): Promise<void> {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Token is missing or invalid.');
+    }
+
+    const token = authHeader.split(' ')[1];
+    try {
+      this.jwtService.verify(token);
+    } catch (error) {
+      throw new UnauthorizedException('Token is invalid or expired.');
+    }
+  }
+
+  // Delete Admin (Restricted)
+  async deleteAdmin(): Promise<void> {
+    throw new ForbiddenException('Admin deletion is not allowed.');
   }
 }
+

@@ -1,31 +1,68 @@
-import { Controller, Post, Body, Query } from '@nestjs/common';
+/*import { Controller, Post, Body, Delete, Param, UseGuards, Request } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { IsEmail, IsNotEmpty } from 'class-validator';
-
-class SignUpDto {
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  password: string;
-}
 
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  // Admin Signup
   @Post('signup')
-  async signUp(@Body() body: SignUpDto) {
-    return this.adminService.signUp(body.email, body.password);
+  async signUp(@Body() body: { email: string; password: string }) {
+    const { email, password } = body;
+    if (!email || !password) {
+      return { message: 'Email and password are required.' };
+    }
+    return this.adminService.signUp(email, password);
   }
 
+  // Admin Login
+  @Post('login')
+  async login(@Body() body: { email: string; password: string; token: string }) {
+    const { email, password, token } = body;
+    if (!email || !password || !token) {
+      return { message: 'Email, password, and token are required.' };
+    }
+    return this.adminService.login(email, password, token);
+  }
+
+  // Restrict Admin Deletion
+  @Delete(':id')
+  async deleteAdmin(@Param('id') id: number) {
+    return this.adminService.deleteAdmin(id);
+  }
+}
+*/
+import { Controller, Post, Body, Delete, Headers, UseGuards } from '@nestjs/common';
+import { AdminService } from './admin.service';
+
+@Controller('admin')
+export class AdminController {
+  constructor(private readonly adminService: AdminService) {}
+
+  // Admin Signup
+  @Post('signup')
+  async signUp(@Body() body: { email: string; password: string }) {
+    const { email, password } = body;
+    if (!email || !password) {
+      return { message: 'Email and password are required.' };
+    }
+    return this.adminService.signUp(email, password);
+  }
+
+  // Admin Login
   @Post('login')
   async login(@Body() body: { email: string; password: string }) {
-    return this.adminService.login(body.email, body.password);
+    const { email, password } = body;
+    if (!email || !password) {
+      return { message: 'Email and password are required.' };
+    }
+    return this.adminService.login(email, password);
   }
 
-  @Post('verify')
-  async verifyAdmin(@Query('email') email: string) {
-    return this.adminService.verifyAdmin(email);
+  // Restrict Admin Deletion
+  @Delete()
+  async deleteAdmin(@Headers('Authorization') authHeader: string) {
+    await this.adminService.validateToken(authHeader);
+    return this.adminService.deleteAdmin();
   }
 }

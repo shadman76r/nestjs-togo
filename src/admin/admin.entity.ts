@@ -1,3 +1,19 @@
+/*import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class Admin {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column()
+  password: string;
+
+  @Column({ nullable: true })
+  token: string; // Token stored for login validation
+}*/
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -6,11 +22,14 @@ export class Admin {
   id: number;
 
   @Column({ unique: true })
-  email: string; // Admin's unique email address (NOT NULL)
+  email: string;
 
   @Column()
-  password: string; // Admin's password (NOT NULL)
+  password: string;
 
-  @Column({ default: false })
-  isVerified: boolean; // Tracks whether the admin is verified
+  @Column({ nullable: true })
+  token: string; // Token stored for validation
 }
+
+
+
