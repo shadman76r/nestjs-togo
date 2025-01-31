@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Delete, Param, UseGuards, Request } from '@nestjs/common';
+/*import { Controller, Post, Body, Delete, Param, UseGuards, Request } from '@nestjs/common';
 import { AdminService } from './admin.service';
 
 @Controller('admin')
@@ -31,7 +31,7 @@ export class AdminController {
     return this.adminService.deleteAdmin(id);
   }
 }
-
+*/
 import { Controller, Post, Body, Delete, Headers, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 
