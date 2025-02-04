@@ -7,7 +7,7 @@ import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SellProperty]), // Register the entity
+    TypeOrmModule.forFeature([SellProperty]), // Register SellProperty entity
     AuthModule, // Import AuthModule for JWT authentication
   ],
   controllers: [BuyPropertyController],
